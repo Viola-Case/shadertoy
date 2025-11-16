@@ -1,5 +1,5 @@
 # Shadertoy
-### A custom-made Shader viewer/editor
+### A custom-made Shader viewer/editor using OpenGL and SDL3
 
 ## Dependencies:
  - GLAD
