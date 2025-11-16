@@ -1,0 +1,9 @@
+shadertoy/
+*.7z
+[Bb]in/
+[Bb]uild/
+.vs/
+x86/
+x64/
+*.sln
+*.vcxproj*
