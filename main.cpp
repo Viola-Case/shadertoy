@@ -119,7 +119,7 @@ int main(int argc, char** argv) {
 		ImGui::NewFrame();
 
 
-		ImGui::Begin("Overlay",  nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+		ImGui::Begin("Info",  nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 		if (isError) {
 			ImGui::Text("Error:\n%s", error.c_str());
 			ImGui::Text("Check shader.glsl for errors!");
