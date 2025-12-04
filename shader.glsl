@@ -1,3 +1,6 @@
+// GLSL 4.5
+
+
 int ITERATIONS = 500;
 
 vec2 I(vec2 z, vec2 c) {
@@ -20,7 +23,7 @@ vec3 julia(vec2 z, vec2 c) {
 			float h = 0.66667 - smth / float(ITERATIONS);
 			return hsv2rgb(vec3(fract(h),1,v));
 		}
-		v = mix(v,1.0,clamp(9.0/float(ITERATIONS),0.0,0.8));
+		v = mix(v,1.0,clamp(9.0/float(2*ITERATIONS),0.0,0.8));
 		//h += 1.0/float(ITERATIONS);
 	}
 	
@@ -40,13 +43,13 @@ vec3 ss4julia(vec2 uv, vec2 c) {
 }
 
 vec3 mandelbrot(vec2 uv) {
-	return ss4julia(vec2(0,0),uv);
+	return ss4julia(vec2(0,0),uv - vec2(0.5,0.));
 }
 
 void main() {
 	
 	
-	vec2 uv = 2 * (fragCoord - vec2(0.75,0.5));
+	vec2 uv = 2 * (fragCoord - vec2(0.5,0.5));
 	
 	vec2 muv = uMouse / uResolution - vec2(0.5,0.5);
 	muv *= 2;
@@ -57,6 +60,8 @@ void main() {
 	//vec3 col = ss4julia(uv,muv);
 	
 	//vec3 col = vec3(0,1,1);
+	
+	//vec3 col = hsv2rgb(vec3(uTime*0.1,1.,1.));
 	
 	fragColor = vec4(col,1.);
 }

@@ -14,6 +14,16 @@ float points[12]{
 	1.,1.
 };
 
+void Recompile(GLuint& program) {
+	glDeleteProgram(program);
+
+	GLuint vert = compileShader(GL_VERTEX_SHADER, vSS);
+	std::string fSS;
+	loadFragmentShader(fSS);
+	GLuint frag = compileShader(GL_FRAGMENT_SHADER, fSS.c_str());
+	program = linkShaderProgram(vert, frag);
+}
+
 int main(int argc, char** argv) {
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS)) {
 		std::cerr << "yall we done fucked up:\n\t" << SDL_GetError() << std::endl;
@@ -93,6 +103,9 @@ int main(int argc, char** argv) {
 
 	double time = 0;
 	size_t frame = 0;
+
+	bool prevMouseState = false;
+	bool mouseButtonDown = false;
 	while (true) {
 		std::chrono::time_point<std::chrono::high_resolution_clock> end = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<double> dT = end - start;
@@ -100,8 +113,8 @@ int main(int argc, char** argv) {
 
 		time += dT.count();
 
-		
-		SDL_GetMouseState(&mX, &mY);
+		prevMouseState = mouseButtonDown;
+
 
 		bool quit = false;
 		{
@@ -118,13 +131,25 @@ int main(int argc, char** argv) {
 		ImGui_ImplSDL3_NewFrame();
 		ImGui::NewFrame();
 
+		mouseButtonDown = (SDL_GetMouseState(&mX, &mY) & SDL_BUTTON_MASK(SDL_BUTTON_LEFT));
 
 		ImGui::Begin("Info",  nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 		if (isError) {
 			ImGui::Text("Error:\n%s", error.c_str());
 			ImGui::Text("Check shader.glsl for errors!");
+		} else {
+			ImGui::Text("FPS: %.1f", 1.0 / dT.count());
+			ImGui::Text("uTime: %.2f",time);
+			ImGui::Text("uTimeDelta: %.4f",dT.count());
+			ImGui::Text("uMouse: (%.0f,%.0f)",mX,mY);
+			ImGui::Text("uMouseButtonDown: %s", (mouseButtonDown ? "true" : "false"));
+			ImGui::Text("uMouseJustClicked: %s", ((mouseButtonDown && !prevMouseState) ? "true" : "false"));
+			ImGui::Text("uFrame: %d",frame);
+			ImGui::Text("uResolution: (%d,%d)",width,height);
 		}
-		ImGui::Text("FPS: %.1f", 1.0/dT.count());
+		if (ImGui::Button("Recompile")) Recompile(program);
+		if (ImGui::Button("Reset")) { time = 0; frame = 0; }
+		
 		ImGui::End();
 
 
@@ -141,6 +166,8 @@ int main(int argc, char** argv) {
 		glUniform2f(glGetUniformLocation(program, "uMouse"), mX, height - mY);
 		glUniform2f(glGetUniformLocation(program, "uResolution"), (float) width, (float) height);
 		
+		glUniform1i(glGetUniformLocation(program, "uMouseButtonDown"), mouseButtonDown);
+		glUniform1i(glGetUniformLocation(program, "uMouseJustClicked"), mouseButtonDown && !prevMouseState);
 
 		glUniform1d(glGetUniformLocation(program, "uTime"), time);
 		glUniform1d(glGetUniformLocation(program, "uTimeDelta"), dT.count());
@@ -164,3 +191,4 @@ int main(int argc, char** argv) {
 
 	return 0;
 }
+
