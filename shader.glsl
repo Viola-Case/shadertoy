@@ -1,4 +1,18 @@
 // GLSL 4.5
+//#version 450 core
+//
+//uniform vec2 uMouse;
+//uniform vec2 uResolution;
+//uniform double uTime;
+//uniform double uTimeDelta;
+//uniform uint uFrame;
+//
+//in vec2 fragCoord;
+//out vec4 fragColor;
+//
+//vec3 rgb2hsv(vec3 c);
+//
+//vec3 hsv2rgb(vec3 c);
 
 
 int ITERATIONS = 500;

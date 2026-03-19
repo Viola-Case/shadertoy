@@ -1,7 +1,22 @@
-{
+﻿{
+  "name": "shadertoy",
+  "version": "1.0",
+  "homepage": "https://github.com/Viola-Case/shadertoy",
+  "license": "BSD-3-Clause",
+  "description": "Radical Open Software Engine",
+  "builtin-baseline": "efa4634bd526b87559684607d2cbbdeeec0f07d8",
   "dependencies": [
-    "glad",
     "sdl3",
-    "imgui"
+    {
+      "name": "imgui",
+      "features": [
+        "sdl3-binding",
+        "opengl3-binding"
+      ]
+    },
+    {
+      "name": "glad",
+      "features": [ "gl-api-45" ]
+    }
   ]
 }

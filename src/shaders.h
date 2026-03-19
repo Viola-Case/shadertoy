@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -95,11 +95,4 @@ GLuint linkShaderProgram(GLuint vertexShader, GLuint fragmentShader) {
 		isError = true;
 	}
 	return shaderProgram;
-}
-
-
-#include "Windows.h"
-
-extern "C" {
-	__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 }

@@ -1,9 +1,12 @@
-#include "shaders.h"
+﻿#include "shaders.h"
 #include <chrono>
 #include <SDL3/SDL_main.h>
 #include <SDL3/SDL.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_opengl3.h>
+#include <thread>
+
+using namespace std::literals::chrono_literals;
 
 float points[12]{
 	0.,1.,
@@ -17,6 +20,8 @@ float points[12]{
 void Recompile(GLuint& program) {
 	glDeleteProgram(program);
 
+	error.clear();
+
 	GLuint vert = compileShader(GL_VERTEX_SHADER, vSS);
 	std::string fSS;
 	loadFragmentShader(fSS);
@@ -29,13 +34,18 @@ int main(int argc, char** argv) {
 		std::cerr << "yall we done fucked up:\n\t" << SDL_GetError() << std::endl;
 	}
 
-	SDL_Window *window = SDL_CreateWindow("ShaderToy", 1000, 1000, SDL_WINDOW_OPENGL | SDL_WINDOW_HIGH_PIXEL_DENSITY);
-
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+	SDL_Window *window = SDL_CreateWindow("ShaderToy", 1000, 1000, SDL_WINDOW_OPENGL | SDL_WINDOW_HIGH_PIXEL_DENSITY);
 
 	SDL_GLContext context = SDL_GL_CreateContext(window);
+
+	if (SDL_GL_SetSwapInterval(1) < 0) {
+		(error += "Warning: Unable to set VSync! SDL Error: %s\n") += SDL_GetError();
+	}
 
 	if (!context) {
 		SDL_DestroyWindow(window);
@@ -51,7 +61,6 @@ int main(int argc, char** argv) {
 
 	ImGui::StyleColorsDark();
 
-	// Tell ImGui you're using SDL3 + OpenGL
 	ImGui_ImplSDL3_InitForOpenGL(window, context);
 	ImGui_ImplOpenGL3_Init("#version 450 core");
 
@@ -106,7 +115,10 @@ int main(int argc, char** argv) {
 
 	bool prevMouseState = false;
 	bool mouseButtonDown = false;
+
+	double fps = 0;
 	while (true) {
+		// std::this_thread::sleep_for(3ms);
 		std::chrono::time_point<std::chrono::high_resolution_clock> end = std::chrono::high_resolution_clock::now();
 		std::chrono::duration<double> dT = end - start;
 		start = std::chrono::high_resolution_clock::now();
@@ -133,12 +145,17 @@ int main(int argc, char** argv) {
 
 		mouseButtonDown = (SDL_GetMouseState(&mX, &mY) & SDL_BUTTON_MASK(SDL_BUTTON_LEFT));
 
+		static int c = 0;
+		if (++c % 10 == 0) {
+			fps = 1 / dT.count();
+		}
+
 		ImGui::Begin("Info",  nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 		if (isError) {
 			ImGui::Text("Error:\n%s", error.c_str());
 			ImGui::Text("Check shader.glsl for errors!");
 		} else {
-			ImGui::Text("FPS: %.1f", 1.0 / dT.count());
+			ImGui::Text("FPS: %.1f", fps);
 			ImGui::Text("uTime: %.2f",time);
 			ImGui::Text("uTimeDelta: %.4f",dT.count());
 			ImGui::Text("uMouse: (%.0f,%.0f)",mX,mY);
