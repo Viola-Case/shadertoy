@@ -3,7 +3,10 @@ shadertoy/
 [Bb]in/
 [Bb]uild/
 .vs/
+.idea
 x86/
 x64/
 *.sln
 *.vcxproj*
+*.ini
+*.ini

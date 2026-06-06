@@ -22,9 +22,19 @@ void loadFragmentShader(std::string& dest) {
 
 uniform vec2 uMouse;
 uniform vec2 uResolution;
+
+uniform bool uMouseButtonDown;
+uniform bool uMouseJustClicked;
+
 uniform double uTime;
 uniform double uTimeDelta;
+
 uniform uint uFrame;
+
+uniform double uCenterX;
+uniform double uCenterY;
+
+uniform double uZoom;
 
 in vec2 fragCoord;
 out vec4 fragColor;
@@ -48,7 +58,7 @@ vec3 hsv2rgb(vec3 c)
 }
 
 )";
-	std::ifstream file("./shader.glsl", std::ios::in | std::ios::binary);
+	const std::ifstream file("./shader.glsl", std::ios::in | std::ios::binary);
 	ss << file.rdbuf();
 	
 
@@ -58,7 +68,7 @@ vec3 hsv2rgb(vec3 c)
 std::string error{};
 bool isError = false;
 
-GLuint compileShader(GLenum type, const char* source) {
+inline GLuint compileShader(GLenum type, const char* source) {
 	GLuint shader = glCreateShader(type);
 	glShaderSource(shader, 1, &source, NULL);
 	glCompileShader(shader);
@@ -73,11 +83,11 @@ GLuint compileShader(GLenum type, const char* source) {
 		error += "ERROR::SHADER::COMPILATION_FAILED\n";
 		(error += infoLog) += '\n';
 		isError = true;
-	}
+	} else isError = false;
 	return shader;
 }
 
-GLuint linkShaderProgram(GLuint vertexShader, GLuint fragmentShader) {
+inline GLuint linkShaderProgram(GLuint vertexShader, GLuint fragmentShader) {
 	GLuint shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);

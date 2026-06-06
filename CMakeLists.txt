@@ -1,8 +1,15 @@
-﻿set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-    CACHE STRING "Vcpkg toolchain file")
-set(VCPKG_MANIFEST_MODE ON)
+﻿cmake_minimum_required(VERSION 4.2)
 
-cmake_minimum_required(VERSION 4.2)
+if(SHADERTOY_USE_VCPKG)
+
+    if(NOT CMAKE_TOOLCHAIN_FILE MATCHES "vcpkg")
+
+        set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            CACHE STRING "Vcpkg toolchain file")
+    endif()
+    set(VCPKG_MANIFEST_MODE ON)
+endif()
+
 
 project(ShaderToy VERSION 1.0)
 
@@ -27,4 +34,10 @@ target_link_libraries(ShaderToy
     PRIVATE SDL3::SDL3
     PRIVATE imgui::imgui
     PRIVATE glad::glad
+)
+
+add_custom_command(TARGET ShaderToy POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/shader.glsl
+        $<TARGET_FILE_DIR:ShaderToy>/
 )

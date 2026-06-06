@@ -8,6 +8,8 @@
 
 using namespace std::literals::chrono_literals;
 
+#define INITIAL_ZOOM 0.5
+
 float points[12]{
 	0.,1.,
 	1.,1.,
@@ -16,6 +18,12 @@ float points[12]{
 	1.,0.,
 	1.,1.
 };
+
+void Reset(double& time, size_t& frame, double& zoom) {
+	time = 0;
+	frame = 0;
+	zoom = INITIAL_ZOOM;
+}
 
 void Recompile(GLuint& program) {
 	glDeleteProgram(program);
@@ -117,6 +125,11 @@ int main(int argc, char** argv) {
 	bool mouseButtonDown = false;
 
 	double fps = 0;
+	double zoom = 0.5;
+
+	double CenterX = 0;
+	double CenterY = 0;
+
 	while (true) {
 		// std::this_thread::sleep_for(3ms);
 		std::chrono::time_point<std::chrono::high_resolution_clock> end = std::chrono::high_resolution_clock::now();
@@ -163,9 +176,14 @@ int main(int argc, char** argv) {
 			ImGui::Text("uMouseJustClicked: %s", ((mouseButtonDown && !prevMouseState) ? "true" : "false"));
 			ImGui::Text("uFrame: %d",frame);
 			ImGui::Text("uResolution: (%d,%d)",width,height);
+			ImGui::Text("uZoom: %f", zoom);
 		}
 		if (ImGui::Button("Recompile")) Recompile(program);
-		if (ImGui::Button("Reset")) { time = 0; frame = 0; }
+		if (ImGui::Button("Reset")) { time = 0; frame = 0; zoom = 0.5; }
+		
+		ImGui::InputDouble("CenterX", &CenterX);
+		ImGui::InputDouble("CenterY", &CenterY);
+
 		
 		ImGui::End();
 
@@ -191,6 +209,12 @@ int main(int argc, char** argv) {
 
 		glUniform1ui(glGetUniformLocation(program, "uFrame"), frame++);
 
+		glUniform1d(glGetUniformLocation(program, "uCenterX"), CenterX );
+		glUniform1d(glGetUniformLocation(program, "uCenterY"), CenterY );
+
+		glUniform1d(glGetUniformLocation(program, "uZoom"), zoom);
+
+		zoom += (-zoom) * 0.5 * dT.count();
 
 
 
