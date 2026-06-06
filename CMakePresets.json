@@ -1,12 +1,19 @@
 ﻿{
-  "version": 3,
+  "version": 6,
   "configurePresets": [
     {
-      "name": "default",
+      "name": "vcpkg-assisted",
       "generator": "Ninja",
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
         "SHADERTOY_USE_VCPKG": "ON"
+      }
+    },
+    {
+      "name": "default",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "SHADERTOY_USE_VCPKG": "OFF"
       }
     }
   ]
