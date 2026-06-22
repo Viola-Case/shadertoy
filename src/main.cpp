@@ -51,9 +51,9 @@ int main(int argc, char** argv) {
 
 	SDL_GLContext context = SDL_GL_CreateContext(window);
 
-	if (SDL_GL_SetSwapInterval(1) < 0) {
-		(error += "Warning: Unable to set VSync! SDL Error: %s\n") += SDL_GetError();
-	}
+	//if (SDL_GL_SetSwapInterval(1) < 0) {
+	//	(error += "Warning: Unable to set VSync! SDL Error: %s\n") += SDL_GetError();
+	//}
 
 	if (!context) {
 		SDL_DestroyWindow(window);
@@ -130,6 +130,8 @@ int main(int argc, char** argv) {
 	double CenterX = 0;
 	double CenterY = 0;
 
+  int Iterations = 50;
+
 	while (true) {
 		// std::this_thread::sleep_for(3ms);
 		std::chrono::time_point<std::chrono::high_resolution_clock> end = std::chrono::high_resolution_clock::now();
@@ -184,6 +186,8 @@ int main(int argc, char** argv) {
 		ImGui::InputDouble("CenterX", &CenterX);
 		ImGui::InputDouble("CenterY", &CenterY);
 
+	  ImGui::InputInt("Iterations", &Iterations);
+
 		
 		ImGui::End();
 
@@ -213,6 +217,8 @@ int main(int argc, char** argv) {
 		glUniform1d(glGetUniformLocation(program, "uCenterY"), CenterY );
 
 		glUniform1d(glGetUniformLocation(program, "uZoom"), zoom);
+
+	  glUniform1i(glGetUniformLocation(program, "uIterations"), Iterations);
 
 		zoom += (-zoom) * 0.5 * dT.count();
 

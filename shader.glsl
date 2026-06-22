@@ -1,11 +1,9 @@
 // GLSL 4.5
 //#version 450 core
 //
-//uniform vec2 uMouse;
-//uniform vec2 uResolution;
-//uniform double uTime;
-//uniform double uTimeDelta;
-//uniform uint uFrame;
+//uniforms are listed in shaders.h
+//and maybe the readme idk
+//honestly I should probably make this work better
 //
 //in vec2 fragCoord;
 //out vec4 fragColor;
@@ -15,7 +13,7 @@
 //vec3 hsv2rgb(vec3 c);
 
 
-int ITERATIONS = 500;
+int ITERATIONS = uIterations;
 
 vec2 I(vec2 z, vec2 c) {
 	return vec2(z.x*z.x-z.y*z.y,2*z.x*z.y) + c;
@@ -70,8 +68,8 @@ void main() {
 	
 	
 	
-	vec3 col = mandelbrot(uv);
-	//vec3 col = ss4julia(uv,muv);
+	//vec3 col = mandelbrot(uv);
+	vec3 col = ss4julia(uv,muv);
 	
 	//vec3 col = vec3(0,1,1);
 	

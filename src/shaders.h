@@ -36,6 +36,8 @@ uniform double uCenterY;
 
 uniform double uZoom;
 
+uniform int uIterations;
+
 in vec2 fragCoord;
 out vec4 fragColor;
 
